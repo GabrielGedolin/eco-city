@@ -1,13 +1,48 @@
 import type { AppProps } from 'next/app';
-import React from 'react';
-import "../public/style/style.css"
-import { Analytics } from "@vercel/analytics/react"
+import React, { useEffect } from 'react';
+import "../public/style/style.css";
+import { Analytics } from "@vercel/analytics/react";
 import Head from 'next/head';
 import Script from 'next/script';
 import { AuthProvider } from '@/contexts/AuthContext';
-import { useRouter } from 'next/router'; // Importe o router do Next.js
+import { useRouter } from 'next/router';
+import { toast } from 'sonner';
 
 function MyApp({ Component, pageProps }: AppProps) {
+  const router = useRouter();
+
+  useEffect(() => {
+    // Intercepta todas as chamadas fetch para adicionar o token
+    const originalFetch = window.fetch;
+    
+    window.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
+      const token = localStorage.getItem('token');
+      
+      // Configura os headers com o token, se existir
+      const headers = new Headers(init?.headers);
+      if (token) {
+        headers.set('Authorization', `Bearer ${token}`);
+      }
+
+      // Faz a requisição com os headers atualizados
+      const response = await originalFetch(input, { ...init, headers });
+      
+      // Se o token estiver expirado ou inválido, redireciona para o login
+      if (response.status === 401) {
+        localStorage.removeItem('token');
+        toast.error('Sessão expirada. Faça login novamente.');
+        router.push('/login');
+      }
+
+      return response;
+    };
+
+    // Limpeza ao desmontar (opcional)
+    return () => {
+      window.fetch = originalFetch;
+    };
+  }, [router]);
+
   return (
     <>
       <Head>
@@ -18,6 +53,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" 
           crossOrigin="anonymous"
         />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
       </Head>
       
       <Script 

@@ -7,6 +7,7 @@
     "leaflet": "^1.9.4",
     "lucide-react": "^0.485.0",
     "next": "^15.2.4",
+    "pg": "^8.14.1",
     "react": "^19.1.0",
     "react-bootstrap-icons": "^1.11.5",
     "react-dom": "^19.1.0",

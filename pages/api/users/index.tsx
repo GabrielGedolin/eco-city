@@ -1,18 +1,30 @@
+// pages/api/users/index.ts
 import { neon } from '@neondatabase/serverless';
-import { NextApiRequest, NextApiResponse } from 'next';
-
-const sql = neon(process.env.DATABASE_URL!);
+import type { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    if (req.method === 'GET') {
-        try {
-            const users = await sql`SELECT * FROM users`;
-            res.status(200).json(users);
-        } catch (err) {
-            console.error('Erro ao buscar usuários:', err);
-            res.status(500).json({ error: 'Erro ao buscar usuários.' });
-        }
-    } else {
-        res.status(405).json({ error: 'Método não permitido.' });
-    }
+  try {
+    const sql = neon(process.env.DATABASE_URL!);
+    
+    // Query de teste simples
+    const test = await sql`SELECT NOW()`;
+    console.log('Teste de conexão:', test);
+    
+    // Query principal
+    const users = await sql`
+      SELECT id, name, email, is_admin 
+      FROM users
+      ORDER BY name ASC
+    `;
+    
+    console.log('Usuários encontrados:', users.length);
+    res.status(200).json(users);
+    
+  } catch (error) {
+    console.error('Erro completo:', {
+      message: error.message,
+      stack: error.stack
+    });
+    res.status(500).json({ error: 'Database error' });
+  }
 }

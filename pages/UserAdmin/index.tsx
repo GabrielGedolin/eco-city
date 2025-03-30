@@ -23,27 +23,51 @@ const UserAdminManagement = () => {
       try {
         setLoading(true);
         const token = localStorage.getItem('token');
+        
+        if (!token) {
+          router.push('/login');
+          return;
+        }
+    
         const response = await fetch('/api/users', {
           headers: {
-            'Authorization': `Bearer ${token}`
+            'Authorization': `Bearer ${token}`,
+            'Cache-Control': 'no-cache'
           }
         });
-        
-        if (!response.ok) throw new Error('Failed to load users');
-        
+    
+        // Debug: verifique os dados brutos da resposta
         const data = await response.json();
-        setUsers(data);
+        console.log('Dados recebidos:', data);
+        
+        if (!response.ok) throw new Error(data.error || 'Failed to load users');
+        
+        // Força atualização do estado mesmo se os dados parecerem iguais
+        setUsers(prevUsers => {
+          const newUsers = JSON.stringify(data) !== JSON.stringify(prevUsers) 
+            ? data 
+            : [...data]; // Cria nova referência mesmo para dados iguais
+          return newUsers;
+        });
+        
       } catch (error) {
-        console.error(error);
+        console.error('Error:', error);
         toast.error('Failed to load users');
       } finally {
         setLoading(false);
       }
     };
-
-    fetchUsers();
-  }, []);
-
+  
+    // Dispara ao montar e quando a rota muda
+    const handleRouteChange = () => fetchUsers();
+    
+    router.events.on('routeChangeComplete', handleRouteChange);
+    fetchUsers(); // Carrega inicialmente
+  
+    return () => {
+      router.events.off('routeChangeComplete', handleRouteChange);
+    };
+  }, [router]); // Adicione router como dependência
   const toggleAdminStatus = async (userId: string, currentStatus: boolean) => {
     if (userId === currentUser?.id || updatingId) {
       toast.error("You cannot change your own admin status");
@@ -61,20 +85,25 @@ const UserAdminManagement = () => {
       ));
   
       const token = localStorage.getItem('token');
-      const response = await fetch('/api/users/admin-status', {
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
+  
+      const response = await fetch('/api/users/update-admin', {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({ 
-          userId,
-          isAdmin: newStatus
+          user_id: userId,
+          is_admin: newStatus
         })
       });
   
+      const data = await response.json();
+      
       if (!response.ok) {
-        const data = await response.json();
         throw new Error(data.error || 'Failed to update database');
       }
   
@@ -84,6 +113,10 @@ const UserAdminManagement = () => {
       setUsers(originalUsers);
       console.error('Error:', error);
       toast.error(error.message || 'Failed to update admin status');
+      
+      if (error.message.includes('Unauthorized')) {
+        router.push('/login');
+      }
     } finally {
       setUpdatingId(null);
     }
