@@ -1,0 +1,28 @@
+echo "# Dependências
+node_modules/
+.next/
+.out/
+
+# Arquivos de ambiente
+.env*.local
+.env
+
+# Configurações do IDE
+.vscode/
+.idea/
+
+# Arquivos do sistema
+.DS_Store
+*.log
+
+# Build
+build/
+dist/
+
+# Outros
+coverage/
+.cache/
+.temp/
+.next/cache/
+.next/analytics/
+.next/trace" > .gitignore
