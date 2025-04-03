@@ -1,6 +1,6 @@
 import type { AppProps } from 'next/app';
 import React, { useEffect } from 'react';
-import "../public/style/style.css";
+import "../public/style/styles.css";
 import { Analytics } from "@vercel/analytics/react";
 import Head from 'next/head';
 import Script from 'next/script';
