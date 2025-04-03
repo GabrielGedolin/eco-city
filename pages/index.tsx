@@ -81,7 +81,7 @@ const Home = () => {
                 </li>
                 <li className="nav-item">
                   <Link className="nav-link" href="/sign-up">
-                    Sing Up
+                    Cadastrar
                   </Link>
                 </li>
               </ul>
