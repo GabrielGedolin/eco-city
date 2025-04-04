@@ -12,35 +12,33 @@ function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
 
   useEffect(() => {
-    // Intercepta todas as chamadas fetch para adicionar o token
-    const originalFetch = window.fetch;
-    
-    window.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
-      const token = localStorage.getItem('token');
+    // Mova a configuração do interceptador para dentro do AuthProvider
+    if (typeof window !== 'undefined') {
+      const originalFetch = window.fetch;
       
-      // Configura os headers com o token, se existir
-      const headers = new Headers(init?.headers);
-      if (token) {
-        headers.set('Authorization', `Bearer ${token}`);
-      }
+      window.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
+        const token = localStorage.getItem('token');
+        
+        const headers = new Headers(init?.headers);
+        if (token) {
+          headers.set('Authorization', `Bearer ${token}`);
+        }
 
-      // Faz a requisição com os headers atualizados
-      const response = await originalFetch(input, { ...init, headers });
-      
-      // Se o token estiver expirado ou inválido, redireciona para o login
-      if (response.status === 401) {
-        localStorage.removeItem('token');
-        toast.error('Sessão expirada. Faça login novamente.');
-        router.push('/login');
-      }
+        const response = await originalFetch(input, { ...init, headers });
+        
+        if (response.status === 401) {
+          localStorage.removeItem('token');
+          toast.error('Sessão expirada. Faça login novamente.');
+          router.push('/login');
+        }
 
-      return response;
-    };
+        return response;
+      };
 
-    // Limpeza ao desmontar (opcional)
-    return () => {
-      window.fetch = originalFetch;
-    };
+      return () => {
+        window.fetch = originalFetch;
+      };
+    }
   }, [router]);
 
   return (

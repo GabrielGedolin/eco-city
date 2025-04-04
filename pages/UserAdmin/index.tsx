@@ -125,10 +125,10 @@ const UserAdminManagement = () => {
   return (
     <div className="container py-5">
       <button 
-        onClick={() => router.push('/admin')}
+        onClick={() => router.push('/')}
         className="btn btn-outline-secondary mb-4"
       >
-        ← Back to Admin Panel
+        ← Voltar pro Site
       </button>
       
       <div className="card shadow border-primary">
