@@ -136,9 +136,9 @@ const UserAdminManagement = () => {
           <div className="d-flex align-items-center gap-3">
             <Shield className="text-primary fs-4" />
             <div>
-              <h2 className="h4 fw-bold mb-1">Administrator Management</h2>
+              <h2 className="h4 fw-bold mb-1">Gestão de Administratores</h2>
               <p className="text-muted mb-0">
-                Manage user administrator privileges
+              Gerenciar privilégios de administrador de usuários
               </p>
             </div>
           </div>
@@ -148,7 +148,7 @@ const UserAdminManagement = () => {
           {loading ? (
             <div className="text-center py-5">
               <div className="spinner-border text-primary" role="status">
-                <span className="visually-hidden">Loading...</span>
+                <span className="visually-hidden">Carregando...</span>
               </div>
             </div>
           ) : (
@@ -156,10 +156,10 @@ const UserAdminManagement = () => {
               <div className="alert alert-warning d-flex align-items-start gap-3 mb-4">
                 <ExclamationTriangle className="mt-1 flex-shrink-0" />
                 <div>
-                  <h5 className="alert-heading">Important Note</h5>
+                  <h5 className="alert-heading">Importante!</h5>
                   <p className="mb-0">
-                    Administrator changes affect system access immediately.
-                    You cannot modify your own admin status.
+                  As alterações do administrador afetam o acesso ao sistema imediatamente.
+                  Você não pode modificar seu próprio status de administrador.
                   </p>
                 </div>
               </div>
@@ -169,10 +169,10 @@ const UserAdminManagement = () => {
                   <thead className="table-light">
                     <tr>
                       <th style={{width: '60px'}}>Admin</th>
-                      <th>User</th>
+                      <th>Usuario</th>
                       <th>Email</th>
                       <th>Status</th>
-                      <th className="text-end">Actions</th>
+                      <th className="text-end">Ação</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -193,7 +193,7 @@ const UserAdminManagement = () => {
                           <div className="d-flex align-items-center gap-2">
                             {user.name}
                             {user.id === currentUser?.id && (
-                              <span className="badge bg-secondary">You</span>
+                              <span className="badge bg-secondary">Você</span>
                             )}
                           </div>
                         </td>
