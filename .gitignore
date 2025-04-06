@@ -26,3 +26,4 @@ coverage/
 .next/cache/
 .next/analytics/
 .next/trace" > .gitignore
+.vercel
