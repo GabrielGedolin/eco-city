@@ -4,8 +4,8 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   // Configuração mínima de CORS
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET');
+  res.setHeader('Access-Control-Allow-Origin', '*'); //sem restrinção aos domínios
+  res.setHeader('Access-Control-Allow-Methods', 'GET'); //permite so metodos get
 
   try {
     // Conexão otimizada
@@ -30,7 +30,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 }
 
-// Configuração anti-timeout
+/*
+Desativa o tratamento interno de erros do Next.js
+
+Seu código passa a responder diretamente, sem intermediários.
+
+Evita timeouts duplos
+
+O Vercel gerencia o timeout global (10s/15s/30s dependendo do plano), sem conflito com o Next.js.
+
+Melhora performance
+
+Remove camadas extras de processamento de requests. 
+*/
 export const config = {
   api: {
     externalResolver: true,

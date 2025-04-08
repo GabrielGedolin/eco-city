@@ -80,7 +80,7 @@ const Home = () => {
                   </Link>
                 </li>
                 <li className="nav-item">
-                  <Link className="nav-link" href="/sign-up">
+                  <Link className="nav-link" href="/cadastrar">
                     Cadastrar
                   </Link>
                 </li>
